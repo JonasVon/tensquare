@@ -1,0 +1,15 @@
+server:
+    port: 9003
+spring:
+    application:
+        name: tensquare-problem
+    datasource:
+        url: jdbc:mysql://192.168.229.128:3306/tensquare_qa?characterEncoding=utf-8&useSSL=false
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+    jpa:
+        show-sql: true
+        database: mysql
+    redis:
+        host: 192.168.229.128
