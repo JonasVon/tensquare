@@ -1,5 +1,6 @@
 package com.jonas.tensquare.problem.controller;
 
+import com.jonas.tensquare.problem.client.BaseClient;
 import com.jonas.tensquare.problem.pojo.Problem;
 import com.jonas.tensquare.problem.service.ProblemService;
 import entity.ConstantVariable;
@@ -20,6 +21,15 @@ public class ProblemController {
 
     @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    private BaseClient baseClient;
+
+    @GetMapping("/label/{labelId}")
+    public Result findByLabelId(@PathVariable("labelId") String labelId){
+        Result result = baseClient.findById(labelId);
+        return result;
+    }
 
     //根据标签id分页查询所有问题
     @GetMapping("/all/{labelId}/{page}/{size}")
