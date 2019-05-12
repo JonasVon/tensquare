@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import util.IdWorker;
+import util.JwtUtil;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ public class UserService {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -108,15 +112,24 @@ public class UserService {
     }
 
     //用户登录
-    public void login(User user) {
+    public String login(User user) {
         User userLogin = userDao.findByMobile(user.getMobile());
         if(userLogin == null){
             //该用户未注册
             throw new RuntimeException(ConstantVariable.LOGIN_NAME_ERROR);
         }else{
             if(!bCryptPasswordEncoder.matches(user.getPassword(),userLogin.getPassword())){
+                //密码错误
                 throw new RuntimeException(ConstantVariable.PASSWORD_ERROR);
             }
         }
+        //生成令牌
+        return jwtUtil.createJWT(userLogin.getId(),userLogin.getMobile(),"user");
+    }
+
+    //更新粉丝量和关注数
+    public void updateFanAndFollow(String userid,String friendid,int x){
+        userDao.updateFansCount(friendid,x);
+        userDao.updateFollowCount(userid,x);
     }
 }

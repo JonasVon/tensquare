@@ -8,6 +8,9 @@ import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 用户模块：用户控制器
  */
@@ -19,15 +22,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //更新关注数和粉丝量
+    @PostMapping("/{userid}/{friendid}/{x}")
+    public void updateFanAndFollow(@PathVariable String userid,@PathVariable String friendid,@PathVariable int x){
+        userService.updateFanAndFollow(userid, friendid, x);
+    }
+
     //用户登录
     @PostMapping("/login")
     public Result login(@RequestBody User user){
+        String token;
         try{
-            userService.login(user);
+            token = userService.login(user);
         }catch (RuntimeException e){
             return new Result(false,StatusCode.ERROR,ConstantVariable.LOGIN_FAIL,e.getMessage());
         }
-        return new Result(true,StatusCode.OK,ConstantVariable.LOGIN_SUCCESS);
+        Map<String,Object> map = new HashMap<>();
+        map.put("name",user.getMobile());
+        map.put("token",token);
+        return new Result(true,StatusCode.OK,ConstantVariable.LOGIN_SUCCESS,map);
     }
 
     //注册用户
